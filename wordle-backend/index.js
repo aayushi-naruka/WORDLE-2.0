@@ -42,7 +42,7 @@ const writeWordInFile = async() => {
 }
 
 
-app.listen(3000,()=>{
+app.listen(3200,()=>{
   console.log("Server started at port 3000")
   const filePath = path.resolve(__dirname, 'wordle.json');
 

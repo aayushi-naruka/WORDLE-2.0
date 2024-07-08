@@ -64,7 +64,7 @@ const InputBoxRow = ({ wordLength, disable, setRowsDisabled }) => {
     } else if (e.key === 'Enter' && filledLetters.length === wordLength) {
       let wordToCheck = word.join('')
       try {
-        let data1 = await axios.post(`http://localhost:3200/game/check/${wordToCheck.length}`, { data: { "word": wordToCheck } })
+        let data1 = await axios.post(`https://wordle-qln9.onrender.com/game/check/${wordToCheck.length}`, { data: { "word": wordToCheck } })
         let {data, status} = data1
         if (status !== 203) {
         let correctPositions = data.correctPositions.map((item) => { return (item.index) })

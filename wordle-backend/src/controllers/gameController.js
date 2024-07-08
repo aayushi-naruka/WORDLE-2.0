@@ -1,38 +1,40 @@
 const fs = require('fs')
 const path = require('path')
 const moment = require('moment')
-const axios = require('axios') 
+const axios = require('axios')
 const filePath = path.resolve(__dirname, '../../words.json')
 
 const checkWordController = async (req, res) => {
     const filePath = path.resolve(__dirname, '../../wordle.json');
     let finalObject
-    let wordExistFlag = await wordExist(req.body.data.word,res)
-    if (wordExistFlag) {
-        await fs.readFile(filePath, 'utf-8', (err, response) => {
-            let date = moment().format("YYYY-MM-DD")
-            let word = JSON.parse(response)[`${date}`][`${req.params.letters}`]
-            let guessedWord = req.body.data.word.toUpperCase()
-            let { correctPositions, incorrectPositions } = wordleChecker(word.toUpperCase(), guessedWord)
-            finalObject = {
-                correctPositions,
-                incorrectPositions
-            }
-            return res.status(200).send(finalObject)
-        })
-    } else {
-      return res.status(203).send(
-        {
-            message: "word does not exist"
+    let wordExistFlag = await wordExist(req.body.data.word, res)
+
+    await fs.readFile(filePath, 'utf-8', (err, response) => {
+        let date = moment().format("YYYY-MM-DD")
+        let word = JSON.parse(response)[`${date}`][`${req.params.letters}`]
+        let guessedWord = req.body.data.word.toUpperCase()
+        let { correctPositions, incorrectPositions } = wordleChecker(word.toUpperCase(), guessedWord)
+        finalObject = {
+            correctPositions,
+            incorrectPositions
         }
-      )
-    }
+        if (wordExistFlag || (word.toUpperCase() === guessedWord)) {
+            return res.status(200).send(finalObject)
+        } else {
+            return res.status(203).send(
+                {
+                    message: "word does not exist"
+                }
+            )
+        }
+    })
+
 }
 
-async function wordExist (word,res) {
+async function wordExist(word, res) {
     try {
         const data = fs.readFileSync(filePath, 'utf8');
-        let worlist = JSON.parse(data)  
+        let worlist = JSON.parse(data)
         let isPresent = worlist.includes(word.toLowerCase())
         return isPresent
     } catch (error) {
@@ -77,6 +79,6 @@ function wordleChecker(correctWord, guessedWord) {
 
 
 
-module.exports={
+module.exports = {
     checkWordController,
 }

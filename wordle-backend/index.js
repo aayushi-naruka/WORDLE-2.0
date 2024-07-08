@@ -58,8 +58,6 @@ app.listen(3200,()=>{
   const filePath = path.resolve(__dirname, 'wordle.json');
 
     fs.readFile(filePath, 'utf-8', async(err,res)=>{
-          console.log(filePath)
-          console.log(res)
           let data = JSON.parse(res)
           let date = moment().format("YYYY-MM-DD")
           let datesFromFile = Object.keys(data)

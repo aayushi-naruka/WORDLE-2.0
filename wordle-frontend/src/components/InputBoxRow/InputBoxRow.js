@@ -3,10 +3,7 @@ import './InputBoxRow.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios'
 import { Context } from '../../pages/Game/Game';
 
@@ -65,7 +62,6 @@ const InputBoxRow = ({ wordLength, disable, setRowsDisabled }) => {
         prevInput.focus();
       }
     } else if (e.key === 'Enter' && filledLetters.length === wordLength) {
-      console.log('Guessed Word is ', word.join(''))
       let wordToCheck = word.join('')
       try {
         let data1 = await axios.post(`http://localhost:3200/game/check/${wordToCheck.length}`, { data: { "word": wordToCheck } })
@@ -116,7 +112,7 @@ const InputBoxRow = ({ wordLength, disable, setRowsDisabled }) => {
             keyboardColorTemp[letter] = 'keyboard-keys yellow-bg'        
           }
         } else {
-          if(!(keyboardColorTemp[letter].includes("green"))) {
+          if(!(keyboardColorTemp[letter].includes("green") || keyboardColorTemp[letter].includes("yellow"))) {
             keyboardColorTemp[letter] = 'keyboard-keys grey-bg'  
           }
         }
@@ -131,22 +127,11 @@ const InputBoxRow = ({ wordLength, disable, setRowsDisabled }) => {
     let currentWord = word
     currentWord[index] = e.target.value.toUpperCase()
     setWord([...currentWord])
-    console.log(currentWord, e.target.value)
   };
 
   const action = (
     <React.Fragment>
-      {/* <Button color="secondary" size="small" onClick={handleSnackbarClose}>
-        UNDO
-      </Button>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleSnackbarClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton> */}
+
     </React.Fragment>
   );
 

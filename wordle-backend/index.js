@@ -6,13 +6,14 @@ const fs = require('fs');
 var wordlist = require('wordlist-english'); 
 const moment = require('moment')
 const path = require('path')
-let fileData
+var cors = require('cors')
+app.use(cors()) 
 // Returns the path to the word list which is separated by `\n`
 // const wordListPath = require('word-list');
  
 // const wordArray = fs.readFileSync(wordListPath, 'utf8').split('\n');
 var commonEnglishWords = wordlist['english/10'];
-const fiveLetterWord = commonEnglishWords.filter((item)=> {return item.length===5})
+const fiveLetterWord = commonEnglishWords.filter((item)=> {return ([3,4,5,6,7].includes(item.length))})
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,12 +26,22 @@ cron.schedule('0 47 9 * * *', async () => {
 });
 
 const writeWordInFile = async() => {
-    var randomNumber = Math.random() * 500;
-    var randomInteger = Math.floor(randomNumber);
-    let date = moment().format("YYYY-MM-DD")
-    fileData = {
-        [date] : fiveLetterWord[randomInteger]
-    }
+  const date = moment().format("YYYY-MM-DD");
+  let wordData = {};
+
+  [3, 4, 5, 6, 7].forEach(length => {
+      // Filter words of specific length
+      const wordsOfLength = commonEnglishWords.filter(word => word.length === length);
+
+      // Select a random word from filtered words
+      const randomIndex = Math.floor(Math.random() * wordsOfLength.length);
+      const randomWord = wordsOfLength[randomIndex];
+
+      // Assign word to wordData object
+      wordData[length] = randomWord;
+  });
+  let fileData = {}
+  fileData[date] = wordData;
     let fileDataString = JSON.stringify(fileData)
     await fs.writeFile('wordle.json', fileDataString, 'utf8', (err) => {
         if (err) {
@@ -62,3 +73,6 @@ app.listen(3200,()=>{
     })
  
 })
+
+
+

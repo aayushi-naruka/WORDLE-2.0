@@ -21,7 +21,7 @@ app.use(express.static('public'));
 
 app.use("/game", gameRoutes)
 
-cron.schedule('0 47 9 * * *', async () => {
+cron.schedule('0 59 11 * * *', async () => {
     await writeWordInFile();
 });
 

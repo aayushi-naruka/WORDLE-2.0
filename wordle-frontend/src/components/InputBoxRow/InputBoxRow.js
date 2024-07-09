@@ -34,6 +34,7 @@ const InputBoxRow = ({ wordLength, disable, setRowsDisabled }) => {
     setWord(Array(wordLength).fill(''))
     setDisableRow(disable)
     setClassName(Array(wordLength).fill('initial-box'))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[wordLength])
 
   useEffect(()=>{

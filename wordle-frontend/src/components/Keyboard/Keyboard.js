@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import './Keyboard.css'
 import { Context } from '../../pages/Game/Game';
 
@@ -45,7 +45,7 @@ export const Keyboard = () => {
             letterSet[letter] = "";
         }
         setKeyboardcolor({...letterSet})
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
 

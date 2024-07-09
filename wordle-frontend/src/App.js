@@ -1,5 +1,5 @@
 import './App.css';
-import {BrowserRouter, Route, Link, Routes} from 'react-router-dom'
+import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import  {Game}  from './pages/Game/Game';
 function App() {
   return (

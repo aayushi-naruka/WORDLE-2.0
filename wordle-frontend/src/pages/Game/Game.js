@@ -1,5 +1,4 @@
 import {React, useEffect, useState, createContext} from 'react'
-import axios from 'axios'
 import { InputBoxRow } from '../../components/InputBoxRow/InputBoxRow'
 import { Keyboard } from '../../components/Keyboard/Keyboard'
 import config from '../../constants'
@@ -8,7 +7,7 @@ import './Game.css'
 export const Context = createContext();
 
 const Game = () => {
-    const [rows, setRows] = useState(6)
+    const rows= 6
     const [wordLength, setWordLength] = useState(5)
     const [disabledRows, setDisabledRows] = useState(['false',...Array(rows-1).fill('true')])
     const [keyboardcolor, setKeyboardcolor] = useState()
@@ -27,7 +26,7 @@ const Game = () => {
         }
         setKeyboardcolor({...keyboardcolors})  
       }
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
     },[wordLength])
 
     function setRowsDisabled() {

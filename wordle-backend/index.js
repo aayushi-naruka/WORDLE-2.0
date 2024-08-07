@@ -7,11 +7,21 @@ var wordlist = require('wordlist-english');
 const moment = require('moment')
 const path = require('path')
 var cors = require('cors')
-app.use(cors()) 
+var socket = require('socket.io')
+var http = require('http')
+let server = http.createServer(app);
+
+app.use(cors({
+  origin : '*'
+}))
 // Returns the path to the word list which is separated by `\n`
 // const wordListPath = require('word-list');
  
 // const wordArray = fs.readFileSync(wordListPath, 'utf8').split('\n');
+
+// io.on('connection',(socket)=>{
+//   console.log('I am socket connection')
+// })
 var commonEnglishWords = wordlist['english/10'];
 const fiveLetterWord = commonEnglishWords.filter((item)=> {return ([3,4,5,6,7].includes(item.length))})
 
@@ -53,8 +63,8 @@ const writeWordInFile = async() => {
 }
 
 
-app.listen(3200,()=>{
-  console.log("Server started at port 3000")
+let ser = app.listen(3200,()=>{
+  console.log("Server started at port 3200")
   const filePath = path.resolve(__dirname, 'wordle.json');
 
     fs.readFile(filePath, 'utf-8', async(err,res)=>{
@@ -71,6 +81,19 @@ app.listen(3200,()=>{
     })
  
 })
-
-
-
+const io = socket(ser,{
+  cors:'*'
+})
+io.on('connection',(socket)=>{
+  socket.on('message',(data)=>{
+     console.log('I am data',data)
+  })
+  socket.on('sendMessage', ({ roomId, message, username }) => {
+    console.log(message, username)
+    io.sockets.in(roomId).emit('receiveMessage',{message, username});
+  });
+  socket.on('joinRoom', ({roomId, username}) => {
+    socket.join(roomId);
+    console.log(`User ${username} joined room ${roomId}`);
+});
+})

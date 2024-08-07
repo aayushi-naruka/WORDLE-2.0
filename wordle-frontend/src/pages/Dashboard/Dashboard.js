@@ -3,6 +3,7 @@ import React from "react"
 import './Dashboard.css'
 import image from '../../assets/images/wordle.png'
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 export const Dashboard = () => {
 
@@ -13,7 +14,9 @@ export const Dashboard = () => {
     }
 
     function createRoom () {
-
+        const roomId = uuidv4();
+        sessionStorage.setItem('roomID', roomId)
+        navigate(`/name/${roomId}`)
     }
 
     return (

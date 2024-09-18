@@ -84,16 +84,54 @@ let ser = app.listen(3200,()=>{
 const io = socket(ser,{
   cors:'*'
 })
+let rooms = {};
 io.on('connection',(socket)=>{
   socket.on('message',(data)=>{
      console.log('I am data',data)
   })
   socket.on('sendMessage', ({ roomId, message, username }) => {
     console.log(message, username)
-    io.sockets.in(roomId).emit('receiveMessage',{message, username});
+    socket.broadcast.emit('receiveMessage',{message, username});
   });
-  socket.on('joinRoom', ({roomId, username}) => {
+  socket.on('joinRoom', ({ roomId, username }) => {
+    // If room doesn't exist, create it
+    if (!rooms[roomId]) {
+      rooms[roomId] = [];
+    }
+
+    // Add the user to the room's participants
+    rooms[roomId].push({ id: socket.id, username });
+
+    // Join the socket to the room
     socket.join(roomId);
+
+    // If the room is empty or only one participant, assign room owner
+    if (rooms[roomId].length === 1) {
+      io.emit('roomOwner', { username: username });
+      console.log(`User ${username} is the owner of room ${roomId}`);
+    } else {
+      io.emit('roomOwner', { username: rooms[roomId][0].username});
+    }
+
     console.log(`User ${username} joined room ${roomId}`);
-});
+  });
+
+  socket.on('disconnect', () => {
+    // Find the room the user was in and remove them
+    for (const roomId in rooms) {
+      rooms[roomId] = rooms[roomId].filter((user) => user.id !== socket.id);
+
+      // If the owner leaves, promote the next user in line
+      if (rooms[roomId].length > 0 && rooms[roomId][0].id === socket.id) {
+        const newOwner = rooms[roomId][0];
+        io.to(newOwner.id).emit('roomOwner', { isOwner: true });
+        console.log(`User ${newOwner.username} is the new owner of room ${roomId}`);
+      }
+
+      // Clean up empty rooms
+      if (rooms[roomId].length === 0) {
+        delete rooms[roomId];
+      }
+    }
+  });
 })

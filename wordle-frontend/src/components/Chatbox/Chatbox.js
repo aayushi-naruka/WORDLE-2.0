@@ -2,12 +2,14 @@ import React, {useState, useEffect} from 'react'
 import './Chatbox.css'
 import avatar from '../../assets/images/avatar.jpg'
 import { io } from 'socket.io-client';
+import { useSelector, useDispatch } from 'react-redux';
 export const ChatBox = () => {
     console.log('I am called')
     const socket = io('http://localhost:3200')
     const [message,setMessage] = useState('')
     const [user, setUser]= useState('')
     const [room, setRoom] = useState('')
+    const roomOwner = useSelector((state) => state.roomOwner.owner?.username);
     //  socket.broadcast.emit("message", "world");
     const [messageList, setMessageList] = useState([])
 
@@ -55,6 +57,7 @@ export const ChatBox = () => {
                 </div>
             </div>
             <div className='message-container'>
+                <h5>Room Owner is: {roomOwner}</h5>
                 {messageList.map((eachMessage,index)=> {
                     return (
                         <div key = {index} className='text-container'>

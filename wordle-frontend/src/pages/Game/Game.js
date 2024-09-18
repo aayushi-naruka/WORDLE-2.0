@@ -3,6 +3,7 @@ import { InputBoxRow } from '../../components/InputBoxRow/InputBoxRow'
 import { Keyboard } from '../../components/Keyboard/Keyboard'
 import config from '../../constants'
 import './Game.css'
+import { useSelector } from 'react-redux'
 
 export const Context = createContext();
 
@@ -11,9 +12,16 @@ const Game = () => {
     const [wordLength, setWordLength] = useState(5)
     const [disabledRows, setDisabledRows] = useState(['false',...Array(rows-1).fill('true')])
     const [keyboardcolor, setKeyboardcolor] = useState()
+    const isOwner = useSelector((state) => state.roomOwner.owner?.isOwner);
     // let disabled = [...disabledRows]
     // disabled[0] = 'false'
     // setDisabledRows([...disabled])
+
+    useEffect(()=>{
+      if(isOwner===false) {
+        setDisabledRows(Array(rows).fill('true'))
+      }
+    },[isOwner])
 
     useEffect(()=>{
       let currentDisabled = Array(rows).fill('true')
@@ -51,7 +59,7 @@ const Game = () => {
                 config.letterWord.map((item, index) => {
                     return (
                         <>
-                        <button key={index} className='letter-length' onClick={()=>{setWordLength(item)}}>{item}</button>
+                        <button disabled={!isOwner} key={index} className='letter-length' onClick={()=>{setWordLength(item)}}>{item}</button>
                         </>
                     )
                 })
@@ -59,7 +67,7 @@ const Game = () => {
             </div>
             <div className='input-container'>
                 {Array.from({ length: rows }, (_, index) => index).map((item,index)=>{
-                    return  <InputBoxRow wordLength={wordLength} disable={disabledRows[index]} setRowsDisabled={setRowsDisabled}key={index} />
+                    return  <InputBoxRow wordLength={wordLength} disable={disabledRows[index]} setRowsDisabled={setRowsDisabled}key={index}/>
                 })}
             </div>
           </div>
